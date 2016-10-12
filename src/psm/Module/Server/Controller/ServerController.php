@@ -458,6 +458,7 @@ class ServerController extends AbstractServerController {
 			'label_type' => psm_get_lang('servers', 'type'),
 			'label_website' => psm_get_lang('servers', 'type_website'),
 			'label_service' => psm_get_lang('servers', 'type_service'),
+			'label_server' => psm_get_lang('servers', 'type_server'),
 			'label_pattern' => psm_get_lang('servers', 'pattern'),
 			'label_pattern_description' => psm_get_lang('servers', 'pattern_description'),
 			'label_last_check' => psm_get_lang('servers', 'last_check'),
