@@ -278,7 +278,7 @@ class ServerController extends AbstractServerController {
 		$server_validator = new \psm\Util\Server\ServerValidator($this->db);
 
 		// format port from http/s url
-		if($clean['type'] == 'website' && empty($clean['port'])) {
+		if(($clean['type'] == 'website' || $clean['type'] == 'server') && empty($clean['port'])) {
 		    $tmp = parse_url($clean["ip"]);
 		    if(isset($tmp["port"])) {
 		        $clean["port"] = $tmp["port"];

@@ -87,6 +87,7 @@ class ServerValidator {
 		}
 
 		switch($type) {
+			case 'server':
 			case 'website':
 				if(!filter_var($value, FILTER_VALIDATE_URL)) {
 					throw new \InvalidArgumentException('server_ip_bad_website');
@@ -113,7 +114,7 @@ class ServerValidator {
 	 * @throws \InvalidArgumentException
 	 */
 	public function type($type) {
-		if(!in_array($type, array('service', 'website'))) {
+		if(!in_array($type, array('service', 'website', 'server'))) {
 			throw new \InvalidArgumentException('server_type_invalid');
 		}
 		return true;
