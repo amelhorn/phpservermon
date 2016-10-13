@@ -96,6 +96,9 @@ class StatusUpdater {
 			case 'website':
 				$this->status_new = $this->updateWebsite($max_runs);
 				break;
+			case 'server':
+				$this->status_new = $this->updateServer($max_runs);
+				break;
 		}
 
 		// update server status
@@ -114,6 +117,21 @@ class StatusUpdater {
 			$save['status'] = 'on';
 			$save['last_online'] = date('Y-m-d H:i:s');
 			$save['warning_threshold_counter'] = 0;
+			
+			//If this is a 'server', save the extra details to the database
+			if($this->server['type'] == 'server') {
+				$this->server_status_json = json_decode($this->server_status_json);
+				
+				$insertArray = array();
+				$insertArray['date'] = date('Y-m-d H:i:s');
+				$insertArray['uptime'] = $this->server_status_json->uptime;
+				$insertArray['hdd_usage'] = $this->server_status_json->hdd;
+				$insertArray['memory_usage'] = $this->server_status_json->memory;
+				$insertArray['cpu_load'] = $this->server_status_json->load;
+				$insertArray['server_id'] = $this->server_id;
+				$this->db->insertMultiple(PSM_DB_PREFIX . 'servers_status', array($insertArray));
+			}
+			
 		} else {
 			// server is offline, increase the error counter
 			$save['warning_threshold_counter'] = $this->server['warning_threshold_counter'] + 1;
@@ -225,6 +243,79 @@ class StatusUpdater {
 		}
 
 		return $result;
+	}
+	
+	
+	/**
+	 * Check the current server as a server (added by Aaron)
+	 * @param int $max_runs
+	 * @param int $run
+	 * @return boolean
+	 */
+	protected function updateServer($max_runs, $run = 1) {
+		$starttime = microtime(true);
+
+		// We're going to ping a specific file here, it will tell us some info about the server
+		// We care about the whole response
+		$curl_result = psm_curl_get(
+			$this->server['ip'] . "/server-mon-uptime.php",
+			false,
+			true,
+			$this->server['timeout']
+		);
+		
+		$this->server_status_json = $curl_result;
+		
+		/*
+		debugging code
+		$myfile = fopen("/var/www/o2dca/server-monitor/public_html/test.txt", "w") or die("Unable to open file!");
+		$txt = $curl_result . "\n";
+		fwrite($myfile, $txt);
+		fclose($myfile);*/
+		
+		$this->rtime = (microtime(true) - $starttime);
+		$this->server_status_data = $curl_result;
+		// check if the call failed - if it did not, save it as A-OK
+		$status_code = 'HTTP/1.1 404 Not Found';
+		if($curl_result !== false) {
+			$status_code = 'HTTP/1.1 200 OK';
+		}
+		// keep it general
+		// $code[1][0] = status code
+		// $code[2][0] = name of status code
+		$code_matches = array();
+		preg_match_all("/[A-Z]{2,5}\/\d\.\d\s(\d{3})\s(.*)/", $status_code, $code_matches);
+
+		if(empty($code_matches[0])) {
+			// somehow we dont have a proper response.
+			$this->error = 'no response from server';
+			$result = false;
+		} else {
+			$code = $code_matches[1][0];
+			$msg = $code_matches[2][0];
+
+			// All status codes starting with a 4 or higher mean trouble!
+			if(substr($code, 0, 1) >= '4') {
+				$this->error = $code . ' ' . $msg;
+				$result = false;
+			} else {
+				$result = true;
+			}
+		}
+		/*if($this->server['pattern'] != '') {
+			// Check to see if the pattern was found.
+			if(!preg_match("/{$this->server['pattern']}/i", $curl_result)) {
+				$this->error = 'Pattern not found.';
+				$result = false;
+			}
+		}*/
+
+		// check if server is available and rerun if asked.
+		if(!$result && $run < $max_runs) {
+			return $this->updateServer($max_runs, $run + 1);
+		}
+
+		return $result;		
 	}
 
 	/**

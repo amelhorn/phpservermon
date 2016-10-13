@@ -65,24 +65,34 @@ class StatusController extends AbstractServerController {
 		// get the active servers from database
 		$servers = $this->getServers();
 
-		$layout_data['servers_offline'] = array();
-		$layout_data['servers_online'] = array();
+		// Seperate out the servers, and websites/services
+		//Website/Service
+		$layout_data['servers_a_offline'] = array();
+		$layout_data['servers_a_online'] = array();
+		//Servers
+		$layout_data['servers_b_offline'] = array();
+		$layout_data['servers_b_online'] = array();
 
 		foreach ($servers as $server) {
 			if($server['active'] == 'no') {
 				continue;
 			}
+			$s_type = 'servers_a_';
+			if($server['type'] == 'server') {
+				$s_type = 'servers_b_';
+			}
+			
 			$server['last_checked_nice'] = psm_timespan($server['last_check']);
 			$server['last_online_nice'] = psm_timespan($server['last_online']);
 			$server['url_view'] = psm_build_url(array('mod' => 'server', 'action' => 'view', 'id' => $server['server_id'], 'back_to' => 'server_status'));
-
+			
 			if ($server['status'] == "off") {
-				$layout_data['servers_offline'][] = $server;
+				$layout_data[$s_type. 'offline'][] = $server;
 			} elseif($server['warning_threshold_counter'] > 0) {
 				$server['class_warning'] = 'warning';
-				$layout_data['servers_offline'][] = $server;
+				$layout_data[$s_type. 'offline'][] = $server;
 			} else {
-				$layout_data['servers_online'][] = $server;
+				$layout_data[$s_type. 'online'][] = $server;
 			}
 		}
 

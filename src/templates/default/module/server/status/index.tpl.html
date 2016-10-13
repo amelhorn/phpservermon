@@ -1,7 +1,8 @@
 <div class="tab-content">
 	<div id="flow-layout" class="tab-pane {{ block_layout_active }}">
+    	<h4>Server Status</h4>
 		<div class="entity-container">
-			{% for server in servers_offline %}
+			{% for server in servers_b_offline %}
 			<div class="offline">
 				<div class="entity {{ server.class_warning }}" onclick="window.location.href='{{ server.url_view|raw }}'">
 					<h2>{{ server.label }}</h2>
@@ -10,7 +11,29 @@
 				</div>
 			</div>
 			{% endfor %}
-			{% for server in servers_online %}
+			{% for server in servers_b_online %}
+			<div class="online">
+				<div class="entity" onclick="window.location.href='{{ server.url_view|raw }}'">
+					<h2>{{ server.label }}</h2>
+					<p>{{ label_last_online }}: {{ server.last_online_nice }}</p>
+					<p>{{ label_rtime }}: {{ server.rtime }}s</p>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+        
+        <h4>Website & Service Status</h4>
+        <div class="entity-container">
+			{% for server in servers_a_offline %}
+			<div class="offline">
+				<div class="entity {{ server.class_warning }}" onclick="window.location.href='{{ server.url_view|raw }}'">
+					<h2>{{ server.label }}</h2>
+					<p>{{ label_last_online }}: {{ server.last_online_nice }}</p>
+					<p>{{ label_last_check }}: {{ server.last_checked_nice }}</p>
+				</div>
+			</div>
+			{% endfor %}
+			{% for server in servers_a_online %}
 			<div class="online">
 				<div class="entity" onclick="window.location.href='{{ server.url_view|raw }}'">
 					<h2>{{ server.label }}</h2>

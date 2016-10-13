@@ -257,6 +257,17 @@ class Installer {
 						  PRIMARY KEY (`servers_history_id`),
 						  UNIQUE KEY `server_id_date` (`server_id`,`date`)
 						) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
+			PSM_DB_PREFIX . 'servers_status' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "servers_status` (
+						 `servers_status_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+						 `server_id` int(11) unsigned NOT NULL,
+						 `date` datetime NOT NULL,
+						 `uptime` varchar(16) NOT NULL,
+						 `hdd_usage` int(11) unsigned NOT NULL,
+						 `memory_usage` int(11) unsigned NOT NULL,
+						 `cpu_load` float(9,7) NOT NULL,
+						 PRIMARY KEY (`servers_status_id`),
+						 KEY `server_id` (`server_id`)
+					   ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
 		);
 
 		foreach($tables as $name => $sql) {
