@@ -397,7 +397,7 @@ class ServerController extends AbstractServerController {
 
 		// create history HTML
 		$history = new \psm\Util\Server\HistoryGraph($this->db, $this->twig);
-		$tpl_data['html_history'] = $history->createHTML($this->server_id);
+		$tpl_data['html_history'] = $history->createHTML($this->server_id, $server['type']);
 
 		// add edit/delete buttons for admins
 		if($this->getUser()->getUserLevel() == PSM_USER_ADMIN) {

@@ -145,7 +145,17 @@ function create_plot($this, mode)
 			{
 				var point = plot.series[seriesIndex].data[pointIndex];
 				var d = new $.jsDate(point[0]);
-				return "&uarr; " + d.strftime(long_date_format) + ' - ' + $.jqplot.sprintf('%.3fs', point[1]);
+				//Depending on the chart, format data different
+				if($this.attr('id').indexOf('_status') !== -1) {
+					//On the new Server Status Chart
+					if(point[1].toString().indexOf(".") !== -1) { 
+						return d.strftime(long_date_format) + ' - ' + point[1];
+					} else {
+						return d.strftime(long_date_format) + ' - ' + point[1] + '%';
+					}
+				} else {
+					return "&uarr; " + d.strftime(long_date_format) + ' - ' + $.jqplot.sprintf('%.3fs', point[1]);
+				}
 			}
 		},
 		canvasOverlay: {

@@ -251,7 +251,7 @@ td.cell-center {
 /*
 	Added for the New 'Server' Configuration
 */
-#flow-layout h4 {
+#flow-layout h4, #list-layout h4 {
 	color:#fff;
 	margin-bottom:20px;
 	font-size:1.3em;
@@ -265,6 +265,18 @@ td.cell-center {
 	width:100%;
 	background:none;	
 }
+
+#list-layout .table .progress {
+	margin-bottom:0;
+}
+
+.center {
+	text-align:center !important;
+}
+
+/*
+	End New Additions for 'Server' Configuration
+*/
 
 @media (max-width: 767px) {
 	.table-cell .title, .table-cell-title .title {

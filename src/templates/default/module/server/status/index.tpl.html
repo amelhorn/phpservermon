@@ -94,11 +94,88 @@
 	</div>
 	<div id="list-layout" class="tab-pane {{ list_layout_active }}">
 		<div class="entity-container">
+			<h4>Server Uptime Monitor</h4>
 			<table class="table table-bordered">
 				<tbody>
-					{% for server in servers_offline %}
+					<tr style="background:#333; color:#aaa;">
+						<td>Server Name</td>
+						<td>Last Online</td>
+						<td class="center">Uptime</td>
+						<td class="center">Load</td>
+						<td class="center">HDD</td>
+						<td class="center">RAM</td>
+					</tr>
+					{% for server in servers_b_offline %}
 						<tr class="row-offline" onclick="window.location.href='{{ server.url_view|raw }}'">
-							<td class="{{ server.class_warning }}"><div class="server-name">{{ server.label }}</div>
+							<td class="{{ server.class_warning }}" width="30%"><div class="server-name">{{ server.label }}</div>
+								<div class="visible-phone">
+									<div class="table-body">
+										<div class="table-row"><div class="table-cell-details tight">{{ label_last_online }}: &nbsp;</div><div class="table-cell-details">{{ server.last_online_nice }}</div></div>
+										<div class="table-row"><div class="table-cell-details tight">{{ label_last_check }}: &nbsp;</div><div class="table-cell-details">{{ server.last_checked_nice }}</div></div>
+									</div>
+								</div>
+							</td>
+							<td class="{{ server.class_warning }} hidden-phone">{{ label_last_online }}: {{ server.last_online_nice }}, {{ label_last_check }}: {{ server.last_checked_nice }}</td>
+							<td class="{{ server.class_warning }} hidden-phone center">Offline</td>
+							<td class="{{ server.class_warning }} hidden-phone center">0.00</td>
+							<td class="{{ server.class_warning }} hidden-phone center">
+								<div class="progress progress-danger active">
+								  <div class="bar" style="width:100%">
+									~{{ alert_type_offline }}~
+								  </div>
+								</div>
+							</td>
+							<td class="{{ server.class_warning }} hidden-phone center">
+								<div class="progress progress-danger active">
+								  <div class="bar" style="width:100%">
+									~{{ alert_type_offline }}~
+								  </div>
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+					{% for server in servers_b_online %}
+						<tr class="row-online" onclick="window.location.href='{{ server.url_view|raw }}'">
+							<td width="30%"><div class="server-name">{{ server.label }}</div>
+								<div class="visible-phone">
+									<div class="table-body">
+										<div class="table-row"><div class="table-cell-details tight">{{ label_last_online }}: &nbsp;</div><div class="table-cell-details">{{ server.last_online_nice }}</div></div>
+										<div class="table-row"><div class="table-cell-details tight">{{ label_rtime }}: &nbsp;</div><div class="table-cell-details">{{ server.rtime }}</div></div>
+									</div>
+								</div>
+							</td>
+							<td class="{{ server.class_warning }} hidden-phone">{{ label_last_online }}: {{ server.last_online_nice }}</td>
+							{% if server.bad_connection %}
+								<td class="{{ server.class_warning }} hidden-phone" colspan="4">{{ server_status_connection_issue }}</td>
+							{% else %}
+								<td class="{{ server.class_warning }} hidden-phone center">{{ server.uptime }}</td>
+								<td class="{{ server.class_warning }} hidden-phone center">{{ server.cpu_load }}</td>
+								<td class="{{ server.class_warning }} hidden-phone center">
+									<div class="progress progress-{{ server.hdd_usage_color }} progress-striped active">
+									  <div class="bar" style="width:{{ server.hdd_usage }}%">
+										{{ server.hdd_usage }}%
+									  </div>
+									</div>
+								</td>
+								<td class="{{ server.class_warning }} hidden-phone center">
+									<div class="progress progress-{{ server.memory_usage_color }} progress-striped active">
+									  <div class="bar" style="width:{{ server.memory_usage }}%">
+										{{ server.memory_usage }}%
+									  </div>
+									</div>
+								</td>
+							{% endif %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			
+			<h4>Website & Service Status</h4>
+			<table class="table table-bordered">
+				<tbody>
+					{% for server in servers_a_offline %}
+						<tr class="row-offline" onclick="window.location.href='{{ server.url_view|raw }}'">
+							<td class="{{ server.class_warning }}" width="30%"><div class="server-name">{{ server.label }}</div>
 								<div class="visible-phone">
 									<div class="table-body">
 										<div class="table-row"><div class="table-cell-details tight">{{ label_last_online }}: &nbsp;</div><div class="table-cell-details">{{ server.last_online_nice }}</div></div>
@@ -110,9 +187,9 @@
 							<td class="{{ server.class_warning }} hidden-phone">{{ label_last_check }}: {{ server.last_checked_nice }}</td>
 						</tr>
 					{% endfor %}
-					{% for server in servers_online %}
+					{% for server in servers_a_online %}
 						<tr class="row-online" onclick="window.location.href='{{ server.url_view|raw }}'">
-							<td><div class="server-name">{{ server.label }}</div>
+							<td width="30%"><div class="server-name">{{ server.label }}</div>
 								<div class="visible-phone">
 									<div class="table-body">
 										<div class="table-row"><div class="table-cell-details tight">{{ label_last_online }}: &nbsp;</div><div class="table-cell-details">{{ server.last_online_nice }}</div></div>
@@ -126,6 +203,8 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			
+			
 		</div>
 	</div>
 </div>
