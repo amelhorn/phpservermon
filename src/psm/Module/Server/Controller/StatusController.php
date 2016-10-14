@@ -60,6 +60,7 @@ class StatusController extends AbstractServerController {
 			'label_server_uptime' => psm_get_lang('servers', 'server_uptime'),
 			'label_rtime' => psm_get_lang('servers', 'latency'),
 			'alert_type_offline' => psm_get_lang('config', 'alert_type_offline'),
+			'server_status_connection_issue' => psm_get_lang('servers', 'server_status_connection_issue'),
 			'block_layout_active'	=> ($layout == 0) ? 'active' : '',
 			'list_layout_active'	=> ($layout != 0) ? 'active' : '',
 		);
@@ -88,22 +89,27 @@ class StatusController extends AbstractServerController {
 				//Get the other server details
 				$sql = "SELECT uptime, hdd_usage, memory_usage, cpu_load FROM " . PSM_DB_PREFIX . "servers_status WHERE server_id=" . $server['server_id'] . " ORDER BY date DESC LIMIT 1";
 				$status_details = $this->db->query($sql);
-				foreach($status_details[0] as $key => $value) {
-					$server[$key] = $value;	
-					//Set color status for progress bars
-					if($key == 'hdd_usage' || $key == 'memory_usage') {
-						if($value >= 90) {
-							$server[$key . '_color'] = 'danger';
-						} else if($value >= 75) {
-							$server[$key . '_color'] = 'warning';
-						} else {
-							$server[$key . '_color'] = 'info';
+				if(!empty($status_details)) {
+					foreach($status_details[0] as $key => $value) {
+						$server[$key] = $value;	
+						//Set color status for progress bars
+						if($key == 'hdd_usage' || $key == 'memory_usage') {
+							if($value >= 90) {
+								$server[$key . '_color'] = 'danger';
+							} else if($value >= 75) {
+								$server[$key . '_color'] = 'warning';
+							} else {
+								$server[$key . '_color'] = 'info';
+							}
+						}
+						//Truncate Load Value
+						if($key == 'cpu_load') {
+							$server[$key] = round($server[$key], 2);
 						}
 					}
-					//Truncate Load Value
-					if($key == 'cpu_load') {
-						$server[$key] = round($server[$key], 2);
-					}
+					$server['bad_connection'] = false;
+				} else {
+					$server['bad_connection'] = true;
 				}
 			}
 			

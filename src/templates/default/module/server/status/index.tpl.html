@@ -31,23 +31,40 @@
 			<div class="online">
 				<div class="entity" onclick="window.location.href='{{ server.url_view|raw }}'">
 					<h2>{{ server.label }}</h2>
-                    
-                    <div class="progress progress-{{ server.hdd_usage_color }} progress-striped active">
-                      <div class="bar" style="width:{{ server.hdd_usage }}%">
-                        {{ label_hard_drive_usage }}: {{ server.hdd_usage }}%
-                      </div>
-                    </div>
-                    <div class="progress progress-{{ server.memory_usage_color }} progress-striped active">
-                      <div class="bar" style="width:{{ server.memory_usage }}%">
-                        {{ label_memory_usage }}: {{ server.memory_usage }}%
-                      </div>
-                    </div>
-					<table>
-                    	<tr>
-                        	<td align="left">{{ label_cpu_usage }}: {{ server.cpu_load }}</td>
-                            <td align="right">{{ label_server_uptime }} {{ server.uptime }}</td>
-                        </tr>
-                    </table>
+					{% if server.bad_connection %}
+                        <div class="progress">
+                          <div class="bar" style="background:#ccc; width:100%">
+                            No Data
+                          </div>
+                        </div>
+                        <div class="progress">
+                          <div class="bar" style="background:#CCC; width:100%">
+                          	No Data
+                          </div>
+                        </div>
+                        <table>
+                            <tr>
+                            	<td align="center">{{ server_status_connection_issue }}</td>
+                            </tr>
+                        </table>
+                    {% else %}
+                    	<div class="progress progress-{{ server.hdd_usage_color }} progress-striped active">
+                          <div class="bar" style="width:{{ server.hdd_usage }}%">
+                            {{ label_hard_drive_usage }}: {{ server.hdd_usage }}%
+                          </div>
+                        </div>
+                        <div class="progress progress-{{ server.memory_usage_color }} progress-striped active">
+                          <div class="bar" style="width:{{ server.memory_usage }}%">
+                            {{ label_memory_usage }}: {{ server.memory_usage }}%
+                          </div>
+                        </div>
+                        <table>
+                            <tr>
+                                <td align="left">{{ label_cpu_usage }}: {{ server.cpu_load }}</td>
+                                <td align="right">{{ label_server_uptime }} {{ server.uptime }}</td>
+                            </tr>
+                        </table>
+                    {% endif %}
 				</div>
 			</div>
 			{% endfor %}

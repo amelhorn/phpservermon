@@ -67,7 +67,13 @@ class HistoryGraph {
 		$graphs = array(
 			0 => $this->generateGraphUptime($server_id, $last_week, $now),
 			1 => $this->generateGraphHistory($server_id, $last_year, $last_week),
+			2 => $this->generateGraphServerUsage($server_id, $last_week, $now),
 		);
+		
+		//Temporary for testing - need a better way to call this
+		//$this->generateGraphServerUsage($server_id, $last_week, $now);
+		##End temp stuff##
+		
 		$info_fields = array(
 			'latency_avg' => '%01.4f',
 			'uptime' => '%01.3f%%',
@@ -98,6 +104,74 @@ class HistoryGraph {
 		);
 
 		return $this->twig->render('module/server/history.tpl.html', $tpl_data);
+	}
+	
+	/**
+	 * Generate data for uptime graph
+	 * @param int $server_id
+	 * @param \DateTime $start_time Lowest DateTime of the graph
+	 * @param \DateTime $end_time Highest DateTime of the graph
+	 * @return array
+	 */
+	public function generateGraphServerUsage($server_id, $start_time, $end_time) {
+		$lines = array(
+			'latency' => array(),
+		);
+		$cb_if_up = function($uptime_record) {
+			return ($uptime_record['status'] == 1);
+		};
+		$records = $this->getRecords('status', $server_id, $start_time, $end_time);
+
+		$data = $this->generateStatusGraphLines($records, $start_time, $end_time);
+		/*$data = $this->generateGraphLines($records, $lines, $cb_if_up, 'latency', $start_time, $end_time, true);
+		*/
+		$data['title'] = psm_get_lang('servers', 'chart_last_week');
+		$data['plotmode'] = 'hour';
+		$data['buttons'] = array();
+		$data['buttons'][] = array('mode' => 'hour', 'label' => psm_get_lang('servers', 'hour'), 'class_active' => 'btn-info');
+		$data['buttons'][] = array('mode' => 'day', 'label' => psm_get_lang('servers', 'day'));
+		$data['buttons'][] = array('mode' => 'week', 'label' => psm_get_lang('servers', 'week'));
+		// make sure to add chart id after buttons so its added to those tmeplates as well
+		$data['chart_id'] = $server_id . '_status';
+
+		return $data;
+	}
+	
+	/*
+	Returns something like this:
+	
+	array (size=6)
+	  'uptime' => int 100
+	  'latency_avg' => float 0.05843
+	  'server_lines' => string '[[[1476410571000,0.0373],[1476410713000,0.0651],[1476411634000,0.0662],[1476412091000,0.0651]]]' (length=95)
+	  'server_down' => string '' (length=0)
+	  'series' => string '[{label: 'Latency'}]' (length=20)
+	  'end_timestamp' => int 1476413201000
+	*/
+	protected function generateStatusGraphLines($records, $start_time, $end_time) {
+		$data = array();
+		$data['server_lines_arr'] = array();
+		//var_dump($records);
+		
+		foreach($records as $record) {
+			$time = strtotime($record['date']) * 1000;
+			
+			$data['server_lines_arr']['hdd_usage'][] = '[' . $time . ',' . $record['hdd_usage'] . ']';
+			$data['server_lines_arr']['memory_usage'][] = '[' . $time . ',' . $record['memory_usage'] . ']';
+			$data['server_lines_arr']['cpu_load'][] = '[' . $time . ',' . $record['cpu_load'] . ']';
+		}
+		
+		$data['server_lines'] = "[";
+		foreach($data['server_lines_arr'] as $type => $values) {
+			$data['server_lines'] .= '[' . implode(',', $values) . '],'	;
+		}
+		$data['server_lines'] = substr($data['server_lines'],0,-1);
+		$data['server_lines'] .= "]";
+		
+		$data['series'] = "[{label: 'HDD'},{label: 'RAM'},{label: 'Load'}]";
+		//$data['server_lines'] = "[[[1476410571000,59],[1476410713000,39]],[[1476410571000,10],[1476410713000,20]]]";
+		var_dump($data);
+		return $data;
 	}
 
 	/**
@@ -174,7 +248,7 @@ class HistoryGraph {
 	 * @return array
 	 */
 	protected function getRecords($type, $server_id, $start_time, $end_time) {
-		if(!in_array($type, array('history', 'uptime'))) {
+		if(!in_array($type, array('history', 'uptime', 'status'))) {
 			return array();
 		}
 
