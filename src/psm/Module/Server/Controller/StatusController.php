@@ -54,7 +54,12 @@ class StatusController extends AbstractServerController {
 		$layout_data = array(
 			'label_last_check' => psm_get_lang('servers', 'last_check'),
 			'label_last_online' => psm_get_lang('servers', 'last_online'),
+			'label_hard_drive_usage' => psm_get_lang('servers', 'hard_drive_usage'),
+			'label_memory_usage' => psm_get_lang('servers', 'memory_usage'),
+			'label_cpu_usage' => psm_get_lang('servers', 'cpu_usage'),
+			'label_server_uptime' => psm_get_lang('servers', 'server_uptime'),
 			'label_rtime' => psm_get_lang('servers', 'latency'),
+			'alert_type_offline' => psm_get_lang('config', 'alert_type_offline'),
 			'block_layout_active'	=> ($layout == 0) ? 'active' : '',
 			'list_layout_active'	=> ($layout != 0) ? 'active' : '',
 		);
@@ -80,12 +85,32 @@ class StatusController extends AbstractServerController {
 			$s_type = 'servers_a_';
 			if($server['type'] == 'server') {
 				$s_type = 'servers_b_';
+				//Get the other server details
+				$sql = "SELECT uptime, hdd_usage, memory_usage, cpu_load FROM " . PSM_DB_PREFIX . "servers_status WHERE server_id=" . $server['server_id'] . " ORDER BY date DESC LIMIT 1";
+				$status_details = $this->db->query($sql);
+				foreach($status_details[0] as $key => $value) {
+					$server[$key] = $value;	
+					//Set color status for progress bars
+					if($key == 'hdd_usage' || $key == 'memory_usage') {
+						if($value >= 90) {
+							$server[$key . '_color'] = 'danger';
+						} else if($value >= 75) {
+							$server[$key . '_color'] = 'warning';
+						} else {
+							$server[$key . '_color'] = 'info';
+						}
+					}
+					//Truncate Load Value
+					if($key == 'cpu_load') {
+						$server[$key] = round($server[$key], 2);
+					}
+				}
 			}
 			
 			$server['last_checked_nice'] = psm_timespan($server['last_check']);
 			$server['last_online_nice'] = psm_timespan($server['last_online']);
 			$server['url_view'] = psm_build_url(array('mod' => 'server', 'action' => 'view', 'id' => $server['server_id'], 'back_to' => 'server_status'));
-			
+
 			if ($server['status'] == "off") {
 				$layout_data[$s_type. 'offline'][] = $server;
 			} elseif($server['warning_threshold_counter'] > 0) {

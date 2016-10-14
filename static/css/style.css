@@ -248,6 +248,24 @@ td.cell-center {
 	text-align: center;
 }
 
+/*
+	Added for the New 'Server' Configuration
+*/
+#flow-layout h4 {
+	color:#fff;
+	margin-bottom:20px;
+	font-size:1.3em;
+}
+
+#flow-layout .entity .progress {
+	margin-bottom:6px;	
+}
+
+#flow-layout .entity table {
+	width:100%;
+	background:none;	
+}
+
 @media (max-width: 767px) {
 	.table-cell .title, .table-cell-title .title {
 		font-size: 1.1em;
