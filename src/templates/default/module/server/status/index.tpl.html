@@ -98,12 +98,12 @@
 			<table class="table table-bordered">
 				<tbody>
 					<tr style="background:#333; color:#aaa;">
-						<td>Server Name</td>
-						<td>Last Online</td>
-						<td class="center">Uptime</td>
-						<td class="center">Load</td>
-						<td class="center">HDD</td>
-						<td class="center">RAM</td>
+						<td class="hidden-phone">Server Name</td>
+						<td class="hidden-phone">Last Online</td>
+						<td class="center hidden-phone">Uptime</td>
+						<td class="center hidden-phone">Load</td>
+						<td class="center hidden-phone">HDD</td>
+						<td class="center hidden-phone">RAM</td>
 					</tr>
 					{% for server in servers_b_offline %}
 						<tr class="row-offline" onclick="window.location.href='{{ server.url_view|raw }}'">
@@ -136,11 +136,11 @@
 					{% endfor %}
 					{% for server in servers_b_online %}
 						<tr class="row-online" onclick="window.location.href='{{ server.url_view|raw }}'">
-							<td width="30%"><div class="server-name">{{ server.label }}</div>
+							<td width="30%"><div class="server-name" style="width:100%;"><span style="float:right; color:#3A5618;" class="visible-phone">CPU: {{ server.cpu_load }}</span>{{ server.label }}</div>
 								<div class="visible-phone">
 									<div class="table-body">
-										<div class="table-row"><div class="table-cell-details tight">{{ label_last_online }}: &nbsp;</div><div class="table-cell-details">{{ server.last_online_nice }}</div></div>
-										<div class="table-row"><div class="table-cell-details tight">{{ label_rtime }}: &nbsp;</div><div class="table-cell-details">{{ server.rtime }}</div></div>
+										<div class="table-row"><div class="table-cell-details tight">{{ label_last_online }}: &nbsp;</div><div class="table-cell-details">{{ server.last_online_nice }}<span style="float:right;">HDD: {{ server.hdd_usage }}%</span></div></div>
+										<div class="table-row"><div class="table-cell-details tight">{{ label_rtime }}: &nbsp;</div><div class="table-cell-details">{{ server.rtime }}<span style="float:right;">RAM: {{ server.memory_usage }}%</span></div></div>
 									</div>
 								</div>
 							</td>

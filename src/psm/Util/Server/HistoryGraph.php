@@ -112,7 +112,7 @@ class HistoryGraph {
 	}
 	
 	/**
-	 * Generate data for uptime graph
+	 * Generate data for the new server status graph
 	 * @param int $server_id
 	 * @param \DateTime $start_time Lowest DateTime of the graph
 	 * @param \DateTime $end_time Highest DateTime of the graph
@@ -134,11 +134,11 @@ class HistoryGraph {
 			*/
 		}
 		$data['title'] = psm_get_lang('servers', 'chart_status');
-		$data['plotmode'] = 'month';
+		$data['plotmode'] = 'hour';
 		$data['buttons'] = array();
-		$data['buttons'][] = array('mode' => 'week2', 'label' => psm_get_lang('servers', 'week'));
-		$data['buttons'][] = array('mode' => 'month', 'label' => psm_get_lang('servers', 'month'), 'class_active' => 'btn-info');
-		$data['buttons'][] = array('mode' => 'year', 'label' => psm_get_lang('servers', 'year'));
+		$data['buttons'][] = array('mode' => 'hour', 'label' => psm_get_lang('servers', 'hour'), 'class_active' => 'btn-info');
+		$data['buttons'][] = array('mode' => 'week', 'label' => psm_get_lang('servers', 'week'));
+		$data['buttons'][] = array('mode' => 'month', 'label' => psm_get_lang('servers', 'month'));
 		// make sure to add chart id after buttons so its added to those tmeplates as well
 		$data['chart_id'] = $server_id . '_status';
 
