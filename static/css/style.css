@@ -270,12 +270,28 @@ td.cell-center {
 	margin-bottom:0;
 }
 
+#list-layout .table .progress .bar {
+	white-space:nowrap;	
+}
+
 .center {
 	text-align:center !important;
 }
 
 /*
 	End New Additions for 'Server' Configuration
+*/
+
+/*
+	Personal Customizations
+*/
+
+.navbar .nav {
+	margin-left:-10px;	
+}
+
+/*
+	End Personal Customizations
 */
 
 @media (max-width: 767px) {

@@ -70,6 +70,9 @@ $sm_lang = array(
 		'user' => 'Users',
 		'help' => 'Help',
 	),
+	'title' => array(
+		'server_status_title' => 'Server Status',
+	),
 	'users' => array(
 		'user' => 'User',
 		'name' => 'Name',

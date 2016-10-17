@@ -47,10 +47,11 @@ class StatusController extends AbstractServerController {
 	protected function executeIndex() {
 		// set background color to black
 		$this->black_background = true;
-		$this->twig->addGlobal('subtitle', psm_get_lang('menu', 'server_status'));
+		$this->twig->addGlobal('subtitle', psm_get_lang('title', 'server_status_title'));
 
 		// add header accessories
 		$layout = $this->getUser()->getUserPref('status_layout', 0);
+
 		$layout_data = array(
 			'label_last_check' => psm_get_lang('servers', 'last_check'),
 			'label_last_online' => psm_get_lang('servers', 'last_online'),
