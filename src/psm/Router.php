@@ -157,7 +157,7 @@ class Router {
 	protected function validateRequest(\psm\Module\ControllerInterface $controller) {
 		$request = Request::createFromGlobals();
 
-		/*if($request->getMethod() == 'POST') {
+		if($request->getMethod() == 'POST') {
 			// require CSRF token for all POST calls
 			$session = $this->container->get('user')->getSession();
 			$token_in = $request->request->get('csrf', '');
@@ -175,7 +175,7 @@ class Router {
 					throw new \InvalidArgumentException('invalid_csrf_token');
 				}
 			}
-		}*/
+		}
 
 		// get min required level for this controller and make sure the user matches
 		$min_lvl = $controller->getMinUserLevelRequired();

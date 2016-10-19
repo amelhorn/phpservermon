@@ -133,8 +133,10 @@ function psm_xhr(mod, params, method, on_complete, options) {
 }
 
 function psm_saveLayout(layout) {
+	
 	var params = {
 		action: 'saveLayout',
+		csrf: $("input[name=saveLayout_csrf]").val(),
 		layout: layout
 	};
 	psm_xhr('server_status', params, 'POST');
